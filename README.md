@@ -24,8 +24,6 @@ $unreal-mcp
 /ue-mcp:configure codex
 ```
 
-Do not use `/unreal-mcp-skills` as a command. That is the distribution/package name.
-
 ## Quick Start
 
 1. Start from a UE project root or provide a `.uproject` path.
