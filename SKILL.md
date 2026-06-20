@@ -101,7 +101,7 @@ When the live schema marks `blueprint`, `graph`, `node`, or class/object inputs 
 
 ## Safety Rules
 
-- Treat UE 5.8 MCP and Toolset APIs as experimental. APIs, schemas, return shapes, and data formats can change.
+- Treat MCP and Toolset APIs as experimental. APIs, schemas, return shapes, and data formats can change.
 - Keep Unreal MCP local. It supports HTTP and Server-Sent Events only, binds to loopback by default, has no authentication layer, rejects non-loopback origins, and is not safe to expose beyond the local machine.
 - Never create or update UE `UAgentSkill` assets without clear user authorization. `CreateSkill` and `UpdateSkill` write Blueprint-backed editor assets.
 - Do not use `AllToolsets` as the default recommendation for production projects; prefer enabling the smallest Toolset set needed for the task.
