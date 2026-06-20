@@ -149,7 +149,8 @@ When connection or tool discovery fails, check in this order:
 3. **Client config**: `ModelContextProtocol.GenerateClientConfig Codex|ClaudeCode|All` wrote config under the project/workspace root, and the agent was launched from that root.
 4. **Logs**: Use Output Log, `LogModelContextProtocol`, or `EditorToolset.LogsToolset.GetLogEntries` with `category: ""`.
 5. **Refresh**: Run `ModelContextProtocol.RefreshTools` after new Toolsets, hot reloads, or Game Feature activation.
-6. **Inspector**: Use MCP Inspector with Streamable HTTP against `/mcp` to list tools and inspect schemas outside the agent.
+6. **Clean restart**: If tools are missing or schemas look stale after RefreshTools, run `ModelContextProtocol.StopServer` then `ModelContextProtocol.StartServer [port]` for a clean registry rebuild. Reconnect the client afterward.
+7. **Inspector**: Use MCP Inspector with Streamable HTTP against `/mcp` to list tools and inspect schemas outside the agent.
 
 Classify logs before diagnosing:
 
