@@ -37,6 +37,9 @@ def main() -> int:
     readme = read_text("README.md")
     metadata_text = read_text("skills.sh.json")
     openai = read_text("agents/openai.yaml")
+    configure_workflow = read_text("references/configure-workflow.md")
+    mcp_tools = read_text("references/mcp-tools.md")
+    policy_text = "\n".join((skill, readme, configure_workflow, mcp_tools))
 
     if not re.search(r"(?m)^name:\s*unreal-mcp\s*$", skill):
         add_error("SKILL.md frontmatter must use name: unreal-mcp")
@@ -50,17 +53,29 @@ def main() -> int:
         add_error("SKILL.md must point configuration tasks to references/configure-workflow.md")
     if "references/uasset-read-comparison.md" not in skill:
         add_error("SKILL.md must point uasset comparison tasks to references/uasset-read-comparison.md")
-    if "scripts/configure-unreal-mcp.py" not in skill or f"scripts/configure-unreal-mcp{ps_suffix}" in skill:
-        add_error("SKILL.md must point configure tasks to scripts/configure-unreal-mcp.py only")
+    if "configure helper" not in skill or f"scripts/configure-unreal-mcp{ps_suffix}" in skill:
+        add_error("SKILL.md must describe the configure helper without Windows-only script paths")
 
     if "npx skills add soatori/unreal-mcp-skills" not in readme:
         add_error("README.md must keep the skills.sh install command")
     if "/unreal-mcp-skills" in readme and "Do not use `/unreal-mcp-skills`" not in readme:
         add_error("README.md may mention /unreal-mcp-skills only to say it is not a command")
-    if "scripts/configure-unreal-mcp.py" not in readme or "scripts/validate-skill.py" not in readme:
-        add_error("README.md must document configure and validation Python scripts")
+    if "scripts/validate-skill.py" not in readme:
+        add_error("README.md must document the validation Python script")
+    quick_start = readme.split("## Configure Command", 1)[0]
+    if "scripts/configure-unreal-mcp.py" in quick_start:
+        add_error("README.md Quick Start should describe skill invocation, not manual configure helper execution")
     if ps_suffix in readme:
         add_error("README.md must not document Windows-only script commands")
+    stale_limits = (
+        "It" + " does" + " not" + " enable `" + "AllToolsets`",
+        "does" + " not" + " enable `" + "AllToolsets`",
+        "Do" + " not" + " enable `" + "AllToolsets` by default",
+        "Do" + " not" + " use `" + "AllToolsets` as the default",
+    )
+    for phrase in stale_limits:
+        if phrase in policy_text:
+            add_error(f"Stale AllToolsets restriction remains: {phrase}")
 
     try:
         metadata = json.loads(metadata_text)

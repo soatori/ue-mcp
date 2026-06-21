@@ -24,24 +24,14 @@ $unreal-mcp
 
 ## Quick Start
 
-1. Start from a UE project root or provide a `.uproject` path.
-2. Run a dry-run configuration check:
+Use this as an agent skill, not as a command-line setup guide:
 
-   ```bash
-   python scripts/configure-unreal-mcp.py -ProjectPath "/path/to/Project" -Target all -DryRun
-   ```
+1. Invoke `$unreal-mcp`, `/unreal-mcp`, or `/ue-mcp` in the agent session.
+2. Ask for the editor task directly, or use `/unreal-mcp:configure <target>` when the project is not connected yet.
+3. Let the agent inspect `list_toolsets`, choose the needed Toolset domain, call `describe_toolset`, then execute through `call_tool`.
+4. If the needed Toolset is missing, enable the task-required Toolset plugin, refresh tools, reconnect if needed, and verify with `list_toolsets`.
 
-3. If the planned changes are correct, run the real configuration:
-
-   ```bash
-   python scripts/configure-unreal-mcp.py -ProjectPath "/path/to/Project" -Target all -Verify
-   ```
-
-4. Launch or restart Unreal Editor.
-5. Start the agent from the project root where MCP config was written.
-6. Confirm the connection by calling `list_toolsets`.
-
-The script enables only the required plugins: `ModelContextProtocol` and `ToolsetRegistry`. It does not enable `AllToolsets` or optional experimental Toolsets.
+Enable Toolset plugins according to the task. `AllToolsets` is acceptable when broad exploration is explicitly useful, but the agent should still verify the live schemas before calling tools.
 
 ## Configure Command
 
@@ -80,6 +70,8 @@ Run the skill consistency check after editing docs, examples, metadata, or scrip
 ```bash
 python scripts/validate-skill.py
 ```
+
+The configure helper is implementation support for `/unreal-mcp:configure`; prefer invoking the skill command in normal use rather than asking users to run the helper manually.
 
 Useful local checks:
 

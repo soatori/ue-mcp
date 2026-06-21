@@ -309,7 +309,7 @@ These plugins exist in the UE source under `Engine/Plugins/Experimental/Toolsets
 
 `MCPClientToolset` is the reverse bridge: it lets UE consume another MCP server. It is not required for Codex to control the Unreal Editor through the editor's own `ModelContextProtocol` server.
 
-Do not enable `AllToolsets` by default. It aggregates many experimental plugins and can increase startup cost, schema noise, and mutation risk. Prefer enabling the smallest domain plugin set, then verify the live list before calling anything.
+Enable Toolset plugins according to the task. `AllToolsets` can be useful for broad discovery or prototyping, but it aggregates many experimental plugins and can increase startup cost, schema noise, and mutation risk. Whether using focused Toolsets or `AllToolsets`, verify the live list before calling anything.
 
 For GAS, Gameplay Tags, Game Features, StateTree, World Conditions, Niagara, UMG, MVVM, Slate Inspector, Dataflow, Physics, Chaos Cloth, Animation, Conversation, MetaHuman, Semantic Search, or any other specialized task, first verify the corresponding Toolset is present, then use `describe_toolset` for exact schemas. Do not infer individual tool names from the category name alone.
 

@@ -29,7 +29,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("-Port", "--port", type=int, default=8000, help="Unreal MCP server port.")
     parser.add_argument("-AutoStart", "--auto-start", action="store_true", help="Write Auto Start defaults.")
-    parser.add_argument("-EnablePlugins", "--enable-plugins", action="store_true", help="Enable required plugins.")
+    parser.add_argument("-EnablePlugins", "--enable-plugins", action="store_true", help="Enable core MCP plugins.")
     parser.add_argument("-Verify", "--verify", action="store_true", help="Probe the MCP endpoint after writing.")
     parser.add_argument("-DryRun", "--dry-run", action="store_true", help="Print planned changes without writing.")
     return parser.parse_args()
@@ -225,7 +225,7 @@ def main() -> int:
     if args.enable_plugins or args.target == "all":
         enable_uproject_plugins(uproject, args.dry_run)
     else:
-        print("Plugin changes skipped. Pass -EnablePlugins or use -Target all to enable ModelContextProtocol and ToolsetRegistry.")
+        print("Plugin changes skipped. Pass -EnablePlugins or use -Target all to enable core MCP plugins.")
 
     if args.auto_start or args.target == "all":
         configure_editor_settings(project_root, args.port, args.dry_run)

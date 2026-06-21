@@ -36,7 +36,7 @@ Use this project skill when the user explicitly invokes `$unreal-mcp`, `/unreal-
 
 | Command | Description |
 |---|---|
-| `/unreal-mcp:configure <target>` | Configure MCP for `claude` / `codex` / `cursor` / `vscode` / `gemini` / `all`. Read `references/configure-workflow.md`, run `python scripts/configure-unreal-mcp.py ... -DryRun` first, then enable required plugins, write Auto Start defaults, generate or merge client config, protect Codex TOML write-once behavior, and verify with `list_toolsets`. |
+| `/unreal-mcp:configure <target>` | Configure MCP for `claude` / `codex` / `cursor` / `vscode` / `gemini` / `all`. Read `references/configure-workflow.md`, use the bundled configure helper as implementation support with dry-run first, then enable core MCP plugins, write Auto Start defaults, generate or merge client config, protect Codex TOML write-once behavior, and verify with `list_toolsets`. |
 | `/unreal-mcp:execute-blueprint` | Execute a Blueprint function in Unreal Engine |
 | `/unreal-mcp:open-widget` | Open an Editor Utility Widget in Unreal Engine |
 
@@ -65,7 +65,7 @@ Keep these activation layers separate:
 ## Workflow
 
 1. Confirm Unreal MCP tools are exposed in the current agent session.
-2. If no Unreal MCP tools are exposed and the user asks for setup, read `references/configure-workflow.md` and use `python scripts/configure-unreal-mcp.py ... -DryRun` before any write. Otherwise guide the user to enable **Unreal MCP**, configure Auto Start or run `ModelContextProtocol.StartServer [port]`, generate client config with `ModelContextProtocol.GenerateClientConfig ClaudeCode|Cursor|VSCode|Gemini|Codex|All`, and restart/connect the agent from the project root where the config was written.
+2. If no Unreal MCP tools are exposed and the user asks for setup, read `references/configure-workflow.md` and run the configure workflow with dry-run before any write. Otherwise guide the user to enable **Unreal MCP**, configure Auto Start or run `ModelContextProtocol.StartServer [port]`, generate client config with `ModelContextProtocol.GenerateClientConfig ClaudeCode|Cursor|VSCode|Gemini|Codex|All`, and restart/connect the agent from the project root where the config was written.
 3. Prefer Tool Search mode. Call `list_toolsets`, choose the capability domain, call `describe_toolset` for the exact Toolset, then call the desired tool through `call_tool`.
 4. In this MCP wrapper, pass the full Toolset name as `toolset_name` and the short tool name as `tool_name`. For example, use `toolset_name: "editor_toolset.toolsets.scene.SceneTools"` and `tool_name: "get_current_level"`, not the fully qualified tool name.
 5. Do not assume a documented Toolset is enabled. Use the current `list_toolsets` result as truth, then inspect schemas with `describe_toolset` before forming arguments.
@@ -86,7 +86,7 @@ Only the live `list_toolsets` result is authoritative. Common baseline toolsets:
 
 For the full toolset map including optional plugins (PCG, GAS, Niagara, UMG, MVVM, etc.), see the "Built-In Toolset Map" section in `references/mcp-tools.md`.
 
-Optional toolset plugins under `Engine/Plugins/Experimental/Toolsets/*` can add more MCP-visible domains. Use the smallest plugin set needed; do not enable `AllToolsets` by default.
+Optional toolset plugins under `Engine/Plugins/Experimental/Toolsets/*` add MCP-visible domains. Enable the Toolset plugins needed for the current task, or use `AllToolsets` when broad discovery/prototyping is explicitly useful and the user accepts the startup/schema-noise tradeoff.
 
 ## Typical Tool Calls
 
@@ -124,7 +124,7 @@ When the live schema marks `blueprint`, `graph`, `node`, or class/object inputs 
 - Treat MCP and Toolset APIs as experimental. APIs, schemas, return shapes, and data formats can change.
 - Keep Unreal MCP local. It supports HTTP and Server-Sent Events only, binds to loopback by default, has no authentication layer, rejects non-loopback origins, and is not safe to expose beyond the local machine.
 - Never create or update UE `UAgentSkill` assets without clear user authorization. `CreateSkill` and `UpdateSkill` write Blueprint-backed editor assets.
-- Do not use `AllToolsets` as the default recommendation for production projects; prefer enabling the smallest Toolset set needed for the task.
+- Prefer enabling the Toolset plugins needed for the task. If `AllToolsets` is already enabled or explicitly chosen for exploration, treat the larger tool surface as schema noise and continue to rely on `list_toolsets` and `describe_toolset` before calls.
 - If a tool is missing after enabling, hot reload, or Game Feature activation, run `ModelContextProtocol.RefreshTools`; if schemas remain stale, reconnect the client.
 - When project-specific conventions matter, use `AgentSkillToolset.ListSkills` and `AgentSkillToolset.GetSkills` before acting.
 - Before save, compile, plugin, config, PIE, test, asset, or graph operations, inspect current state with the corresponding read-only Toolset operation when available.
